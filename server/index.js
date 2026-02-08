@@ -1,5 +1,5 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,20 +20,26 @@ const broadcast = (eventName, payload) => {
   clients.forEach((res) => sendToClient(res, eventName, payload));
 };
 
-app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'student-teacher-sse-server' });
+app.get("/health", (req, res) => {
+  res.json({ ok: true, service: "student-teacher-sse-server" });
 });
 
-app.get('/results', (req, res) => {
+app.get("/results", (req, res) => {
   res.json({ count: submissions.length, submissions });
 });
 
-app.post('/submit', (req, res) => {
+app.post("/submit", (req, res) => {
   const { studentName, questionId, answer, isCorrect } = req.body || {};
 
-  if (!studentName || !questionId || typeof answer !== 'string' || typeof isCorrect !== 'boolean') {
+  if (
+    !studentName ||
+    !questionId ||
+    typeof answer !== "string" ||
+    typeof isCorrect !== "boolean"
+  ) {
     return res.status(400).json({
-      error: 'Invalid payload. Required: studentName, questionId, answer, isCorrect(boolean).'
+      error:
+        "Invalid payload. Required: studentName, questionId, answer, isCorrect(boolean).",
     });
   }
 
@@ -43,55 +49,33 @@ app.post('/submit', (req, res) => {
     questionId: String(questionId),
     answer,
     isCorrect,
-    submittedAt: new Date().toISOString()
+    submittedAt: new Date().toISOString(),
   };
 
   nextId += 1;
   submissions.unshift(submission);
 
-  broadcast('submission', submission);
+  broadcast("submission", submission);
 
   return res.status(201).json({ ok: true, submission });
-
-app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'express-sse-server' });
 });
 
-app.get('/events', (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+app.get("/events", (req, res) => {
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
 
   res.flushHeaders();
+  console.log(res, "res ");
   clients.add(res);
 
-  sendToClient(res, 'connected', {
-    message: 'Teacher connected to live events',
-    activeClients: clients.size
+  sendToClient(res, "connected", {
+    message: "Teacher connected to live events",
+    activeClients: clients.size,
   });
 
-  req.on('close', () => {
+  req.on("close", () => {
     clients.delete(res);
-
-  let count = 0;
-
-  const sendEvent = () => {
-    count += 1;
-
-    const payload = {
-      id: count,
-      message: `Event #${count} from Express SSE`,
-      time: new Date().toISOString()
-    };
-
-    res.write(`data: ${JSON.stringify(payload)}\n\n`);
-  };
-
-  sendEvent();
-  const interval = setInterval(sendEvent, 2000);
-
-  req.on('close', () => {
-    clearInterval(interval);
     res.end();
   });
 });

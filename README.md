@@ -10,25 +10,20 @@ This project is a small and easy example for your use case:
 Yes, that behavior is normal when state is stored only in frontend memory.
 On page refresh, React state resets.
 
-In this version, results are stored in the backend memory and loaded via `GET /results`, then live updates come from `GET /events`.
-# Express + Next.js SSE Demo
-
-A small and easy full-stack project that uses:
-
-- **Express.js** for a Server-Sent Events (SSE) endpoint
-- **Next.js** frontend to listen to and render incoming events in real time
+In this version, results are stored in the backend memory and loaded via `GET /results`,
+then live updates come from `GET /events`.
 
 ## Project structure
 
-- `server/` — Express backend
-- `client/` — Next.js frontend
+- `server/` - Express backend
+- `client/` - Next.js frontend
 
 ## Backend API
 
-- `GET /health` → health check
-- `GET /results` → all submitted answers
-- `POST /submit` → create new student submission
-- `GET /events` → SSE stream for teacher live updates
+- `GET /health` -> health check
+- `GET /results` -> all submitted answers
+- `POST /submit` -> create new student submission
+- `GET /events` -> SSE stream for teacher live updates
 
 Example payload for `POST /submit`:
 
@@ -42,7 +37,7 @@ Example payload for `POST /submit`:
 ```
 
 ## Run backend (Express)
-## 1) Run the Express SSE server
+1) Run the Express SSE server
 
 ```bash
 cd server
@@ -53,18 +48,9 @@ npm start
 Runs on `http://localhost:4000`.
 
 ## Run frontend (Next.js)
+2) Run the Next.js frontend
 
 In another terminal:
-Server starts on `http://localhost:4000`.
-
-Available endpoints:
-
-- `GET /health` → simple health check
-- `GET /events` → SSE stream with one event every 2 seconds
-
-## 2) Run the Next.js frontend
-
-In a second terminal:
 
 ```bash
 cd client
@@ -73,6 +59,12 @@ npm run dev
 ```
 
 Open `http://localhost:3000`.
+
+Pages:
+
+- `http://localhost:3000/` -> choose Student or Teacher UI
+- `http://localhost:3000/student` -> Student submit form
+- `http://localhost:3000/teacher` -> Teacher live panel
 
 ## How to test quickly
 
@@ -91,8 +83,7 @@ You need backend to:
 Without backend, each browser only sees its own local data.
 You should see:
 - Connection status
-- A live event counter
-- A growing list of messages received from the Express SSE server
+- A growing list of submissions received from the Express SSE server
 
 ## Notes
 
